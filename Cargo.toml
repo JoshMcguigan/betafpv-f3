@@ -1,0 +1,13 @@
+[package]
+name = "betafpv-f3"
+version = "0.1.0"
+authors = ["Josh Mcguigan"]
+
+[dev-dependencies]
+cortex-m = "*"
+cortex-m-rt = "*"
+panic-semihosting = "*"
+
+[dev-dependencies.stm32f30x-hal]
+features = ["rt"]
+version = "*"

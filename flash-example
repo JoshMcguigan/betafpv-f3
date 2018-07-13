@@ -1,0 +1,9 @@
+#!/bin/bash
+# Ensure board is plugged in, and in bootloader mode before running
+# Run with the name of an example as the first argument
+# Example: ./flash-example led-control
+# This builds the example in release mode then flashes the controller
+
+cargo build --release --example $1
+arm-none-eabi-objcopy -O binary ./target/thumbv7em-none-eabihf/release/examples/$1 ./target/thumbv7em-none-eabihf/release/examples/$1.bin
+dfu-util -D ./target/thumbv7em-none-eabihf/release/examples/$1.bin --alt 0 -R -s 0x08000000
