@@ -6,4 +6,4 @@
 
 cargo build --release --example $1
 arm-none-eabi-objcopy -O binary ./target/thumbv7em-none-eabihf/release/examples/$1 ./target/thumbv7em-none-eabihf/release/examples/$1.bin
-dfu-util -D ./target/thumbv7em-none-eabihf/release/examples/$1.bin --alt 0 -R -s 0x08000000
+dfu-util -D ./target/thumbv7em-none-eabihf/release/examples/$1.bin --alt 0 -s 0x08000000
