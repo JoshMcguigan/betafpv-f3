@@ -3,11 +3,14 @@ name = "betafpv-f3"
 version = "0.1.0"
 authors = ["Josh Mcguigan"]
 
+[dependencies.stm32f30x-hal]
+features = ["rt"]
+version = "*"
+
 [dev-dependencies]
 cortex-m = "*"
 cortex-m-rt = "*"
 panic-semihosting = "*"
 
-[dev-dependencies.stm32f30x-hal]
-features = ["rt"]
-version = "*"
+[features]
+rt = ["stm32f30x-hal/rt"]

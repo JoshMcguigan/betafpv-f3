@@ -1,47 +1,44 @@
 #![no_std]
 #![no_main]
 
+extern crate betafpv_f3;
+extern crate cortex_m;
 #[macro_use(entry, exception)]
 extern crate cortex_m_rt as rt;
-extern crate cortex_m;
 extern crate panic_semihosting;
-extern crate stm32f30x_hal;
 
-use rt::ExceptionFrame;
-use core::ptr;
+use betafpv_f3::hal::prelude::*;
+use betafpv_f3::hal::stm32f30x;
 use cortex_m::asm::nop;
+use rt::ExceptionFrame;
 
 entry!(main);
 
 fn main() -> ! {
-    const RCC_AHBENR: u32 = 0x40021014;
-    // page 51
-    const GPIOC_MODER: u32 = 0x48000800;
-    // page 51 for start of GPIOC plus offset 18 on page 240
-    const GPIOC_BSRR: u32 = 0x48000818;
+    let p = stm32f30x::Peripherals::take().unwrap();
+    let mut rcc = p.RCC.constrain();
 
-    unsafe {
-        // reference manual page 148
-        *(RCC_AHBENR as *mut u32) = 1 << 19;
 
-        // page 237
-        *(GPIOC_MODER as *mut u32) = 1 << 30;
+    let mut gpioc = p.GPIOC.split(&mut rcc.ahb);
 
-        loop {
-            // page 240
-            ptr::write_volatile(GPIOC_BSRR as *mut u32, 1 << (15+16));
+    let mut led = gpioc
+        .pc15
+        .into_push_pull_output(&mut gpioc.moder, &mut gpioc.otyper);
 
-            for _i in 0..100_000 {
-                nop();
-            }
+    loop {
+        led.set_high();
 
-            ptr::write_volatile(GPIOC_BSRR as *mut u32, 1 << (15));
+        for _i in 0..100_000 {
+            nop();
+        }
 
-            for _i in 0..100_000 {
-                nop();
-            }
+        led.set_low();
+
+        for _i in 0..100_000 {
+            nop();
         }
     }
+
 }
 
 exception!(HardFault, hard_fault);
