@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Josh Mcguigan"]
 
 [dependencies.stm32f30x-hal]
-features = ["rt"]
+git = "https://github.com/JoshMcguigan/stm32f30x-hal"
 version = "*"
 
 [dev-dependencies]
