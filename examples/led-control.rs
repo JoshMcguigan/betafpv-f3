@@ -17,7 +17,7 @@ entry!(main);
 
 fn main() -> ! {
 
-    let Board {mut led, ..} = Board::new(Peripherals::take().unwrap());
+    let Board {mut led, ..} = Board::new();
 
     loop {
         led.set_high();

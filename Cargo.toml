@@ -3,12 +3,15 @@ name = "betafpv-f3"
 version = "0.1.0"
 authors = ["Josh Mcguigan"]
 
+[dependencies]
+mpu9250 = { path = "../mpu9250" }
+cortex-m = "*"
+
 [dependencies.stm32f30x-hal]
 git = "https://github.com/JoshMcguigan/stm32f30x-hal"
 version = "*"
 
 [dev-dependencies]
-cortex-m = "*"
 cortex-m-rt = "*"
 panic-semihosting = "*"
 

@@ -12,50 +12,28 @@ use betafpv_f3::hal::stm32f30x::Peripherals;
 use betafpv_f3::Board;
 use cortex_m::asm::nop;
 use rt::ExceptionFrame;
-use betafpv_f3::Mpu;
 
 entry!(main);
 
 fn main() -> ! {
-    // TODO confirm SPI mode in lib.rs
-    let Board {mut led, mpu: Mpu{mut nss, mut spi}} = Board::new(Peripherals::take().unwrap());
+    let Board {mut led, mut mpu} = Board::new();
 
-    nss.set_low();
+    // expected 0x68 based on https://github.com/betaflight/betaflight/blob/master/src/main/drivers/accgyro/accgyro_mpu.h
+    // TODO determine why this assertion fails
+    assert_eq!(mpu.who_am_i().unwrap(), 0x68);
 
-    // 0x75 from https://github.com/betaflight/betaflight/blob/master/src/main/drivers/accgyro/accgyro_mpu.h
-    // 0x80 from https://github.com/betaflight/betaflight/blob/0b8709df29b173261b79d799708fbfcb13b7748a/src/main/drivers/bus_spi.c
-    let mut buffer = [0x75 | 0x80, 0];
-    spi.transfer(&mut buffer).unwrap();
-
-    nss.set_high();
-
+    // blinking LED means the assertion was correct
     loop {
-        for _ in 0..buffer[1]/10 {
-            led.set_high();
+        led.set_high();
 
-            for _i in 0..300_000 {
-                nop();
-            }
-
-            led.set_low();
-
-            for _i in 0..300_000 {
-                nop();
-            }
+        for _i in 0..100_000 {
+            nop();
         }
 
-        loop {
-            led.set_high();
+        led.set_low();
 
-            for _i in 0..2_000_000 {
-                nop();
-            }
-
-            led.set_low();
-
-            for _i in 0..2_000_000 {
-                nop();
-            }
+        for _i in 0..100_000 {
+            nop();
         }
     }
 }
