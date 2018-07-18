@@ -4,15 +4,15 @@
 
 ## What works
 
-- A script to build the blinking LED demo and flash it onto the controller 
+- LED control
+- Basic gyro/accelerometer functionality
+- A script to build each example and flash it onto the controller 
 
 ## TODO
 
-- [ ] LEDs
 - [ ] Motor Outputs
-- [ ] UART
-- [ ] Gyro/Accelerometer (blocked by driver support for the on-board MPU-6000)
-- [ ] Radio Receiver (blocked by driver support)
+- [ ] UART 
+- [ ] Radio Receiver
 
 ## Use
 

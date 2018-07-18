@@ -8,11 +8,6 @@ use hal::gpio::gpioc::PC15;
 use hal::prelude::*;
 use hal::stm32f30x;
 use hal::spi::Spi;
-use hal::hal::spi::{Mode, Phase, Polarity};
-use hal::gpio::gpioa::PA15;
-use hal::gpio::AF5;
-use hal::gpio::gpiob::{PB3, PB4, PB5};
-use hal::stm32f30x::SPI1;
 
 extern crate mpu9250;
 use mpu9250::Mpu9250;

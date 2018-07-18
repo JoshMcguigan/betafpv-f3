@@ -8,7 +8,6 @@ extern crate cortex_m_rt as rt;
 extern crate panic_semihosting;
 
 use betafpv_f3::hal::prelude::*;
-use betafpv_f3::hal::stm32f30x::Peripherals;
 use betafpv_f3::Board;
 use cortex_m::asm::nop;
 use rt::ExceptionFrame;
