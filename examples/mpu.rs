@@ -8,7 +8,6 @@ extern crate cortex_m_rt as rt;
 extern crate panic_semihosting;
 
 use betafpv_f3::hal::prelude::*;
-use betafpv_f3::hal::stm32f30x::Peripherals;
 use betafpv_f3::Board;
 use cortex_m::asm::nop;
 use rt::ExceptionFrame;
@@ -27,7 +26,7 @@ fn main() -> ! {
     assert_eq!(mpu.who_am_i().unwrap(), 0x68);
 
     // blinking LED means the assertion was correct
-    loop {
+    for _i in 0..5 {
         led.set_high();
 
         for _i in 0..100_000 {
@@ -35,6 +34,21 @@ fn main() -> ! {
         }
 
         led.set_low();
+
+        for _i in 0..100_000 {
+            nop();
+        }
+    }
+
+    // LED controlled by orientation of board
+    loop {
+        let board_up = mpu.accel().unwrap().x > 0;
+
+        if board_up {
+            led.set_high();
+        } else {
+            led.set_low();
+        }
 
         for _i in 0..100_000 {
             nop();
