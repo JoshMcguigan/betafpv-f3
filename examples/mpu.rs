@@ -18,8 +18,12 @@ entry!(main);
 fn main() -> ! {
     let Board {mut led, mut mpu} = Board::new();
 
-    // expected 0x68 based on https://github.com/betaflight/betaflight/blob/master/src/main/drivers/accgyro/accgyro_mpu.h
-    // TODO determine why this assertion fails
+    // https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
+    // expected 0x68 based on register map
+    // some startup time is required or this assertion fails
+    for _i in 0..1_000_000 {
+        nop();
+    }
     assert_eq!(mpu.who_am_i().unwrap(), 0x68);
 
     // blinking LED means the assertion was correct
