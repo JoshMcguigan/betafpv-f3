@@ -9,40 +9,33 @@ extern crate panic_semihosting;
 
 use betafpv_f3::hal::prelude::*;
 use betafpv_f3::Board;
-use cortex_m::asm::nop;
 use rt::ExceptionFrame;
 
 entry!(main);
 
 fn main() -> ! {
-    let Board {mut led, mut mpu} = Board::new();
+    let Board {mut led, mut mpu, mut delay} = Board::new();
 
     // https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
     // expected 0x68 based on register map
     // some startup time is required or this assertion fails
-    for _i in 0..1_000_000 {
-        nop();
-    }
+    delay.delay_ms(1000u16);
     assert_eq!(mpu.who_am_i().unwrap(), 0x68);
 
     // blinking LED means the assertion was correct
     for _i in 0..5 {
         led.set_high();
 
-        for _i in 0..100_000 {
-            nop();
-        }
+        delay.delay_ms(500u16);
 
         led.set_low();
 
-        for _i in 0..100_000 {
-            nop();
-        }
+        delay.delay_ms(500u16);
     }
 
     // LED controlled by orientation of board
     loop {
-        let board_up = mpu.accel().unwrap().x > 0;
+        let board_up = mpu.accel().unwrap().z > 0;
 
         if board_up {
             led.set_high();
@@ -50,9 +43,7 @@ fn main() -> ! {
             led.set_low();
         }
 
-        for _i in 0..100_000 {
-            nop();
-        }
+        delay.delay_ms(500u16);
     }
 }
 

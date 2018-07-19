@@ -16,6 +16,7 @@ use hal::delay::Delay;
 pub struct Board {
     pub led: PC15<Output<PushPull>>,
     pub mpu: mpu9250::Mpu9250<hal::spi::Spi<hal::stm32f30x::SPI1, (hal::gpio::gpiob::PB3<hal::gpio::AF5>, hal::gpio::gpiob::PB4<hal::gpio::AF5>, hal::gpio::gpiob::PB5<hal::gpio::AF5>)>, hal::gpio::gpioa::PA15<hal::gpio::Output<hal::gpio::PushPull>>, mpu9250::Imu>,
+    pub delay: Delay,
 }
 
 impl Board {
@@ -37,11 +38,9 @@ impl Board {
         let nss = gpioa
             .pa15
             .into_push_pull_output(&mut gpioa.moder, &mut gpioa.otyper);
-
         let sck = gpiob.pb3.into_af5(&mut gpiob.moder, &mut gpiob.afrl);
         let miso = gpiob.pb4.into_af5(&mut gpiob.moder, &mut gpiob.afrl);
         let mosi = gpiob.pb5.into_af5(&mut gpiob.moder, &mut gpiob.afrl);
-
         let spi = Spi::spi1(
             dp.SPI1,
             (sck, miso, mosi),
@@ -51,9 +50,8 @@ impl Board {
             &mut rcc.apb2,
         );
         let mut delay = Delay::new(cp.SYST, clocks);
-
         let mpu = Mpu9250::imu(spi, nss, &mut delay).unwrap();
 
-        Board { led, mpu }
+        Board { led, mpu, delay }
     }
 }
