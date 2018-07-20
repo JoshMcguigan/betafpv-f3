@@ -14,16 +14,22 @@ entry!(main);
 
 fn main() -> ! {
 
-    let Board {mut led, mut delay, ..} = Board::new();
+    let Board {mut motor_1, mut motor_2, mut motor_3, mut motor_4, mut delay, ..} = Board::new();
 
     loop {
-        led.set_high();
+        motor_1.set_high();
+        motor_2.set_high();
+        motor_3.set_high();
+        motor_4.set_high();
 
-        delay.delay_ms(500u16);
+        delay.delay_ms(2000u16);
 
-        led.set_low();
+        motor_1.set_low();
+        motor_2.set_low();
+        motor_3.set_low();
+        motor_4.set_low();
 
-        delay.delay_ms(500u16);
+        delay.delay_ms(2000u16);
     }
 
 }
