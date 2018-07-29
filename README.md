@@ -5,14 +5,15 @@
 ## What works
 
 - LED control
+- Motor control
+- Serial communication
 - Basic gyro/accelerometer functionality
 - A script to build each example and flash it onto the controller 
 
 ## TODO
 
-- [ ] Motor Outputs
-- [ ] UART 
-- [ ] Radio Receiver
+- [ ] Sensor fusion
+- [ ] Radio receiver
 
 ## Use
 
