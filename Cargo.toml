@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Josh Mcguigan"]
 
 [dependencies]
-mpu9250 = { path = "../mpu9250" }
+mpu9250 = { git = "https://github.com/JoshMcguigan/mpu9250" }
 
 [dependencies.stm32f30x-hal]
 git = "https://github.com/JoshMcguigan/stm32f30x-hal"
@@ -13,6 +13,7 @@ version = "*"
 [dev-dependencies]
 cortex-m-rt = "*"
 panic-semihosting = "*"
+bit-bang-serial = {git = "https://github.com/JoshMcguigan/bit-bang-serial"}
 
 [features]
 rt = ["stm32f30x-hal/rt"]
