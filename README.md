@@ -14,6 +14,7 @@
 
 - [ ] Sensor fusion
 - [ ] Radio receiver
+- [ ] USB port support
 
 ## Use
 
