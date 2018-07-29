@@ -29,7 +29,7 @@ pub struct Board {
     pub led: Led,
     pub mpu: Mpu,
     pub delay: Delay,
-    /// motor outputs are supplied voltage only when battery is connected, they are now powered by USB
+    /// motor outputs are supplied voltage only when battery is connected, they are not powered by USB
     /// there are two green LEDs which also come on when battery voltage is applied
     /// the green LEDs do not seem to be controlled by GPIO
     pub motor_1: Motor1,
