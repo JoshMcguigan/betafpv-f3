@@ -11,10 +11,6 @@ extern crate bit_bang_serial;
 use betafpv_f3::hal::prelude::*;
 use betafpv_f3::Board;
 use rt::ExceptionFrame;
-use stm32f30x_hal::gpio::PushPull;
-use stm32f30x_hal::gpio::Output;
-use stm32f30x_hal::delay::Delay;
-use stm32f30x_hal::gpio::gpioa::PA6;
 
 entry!(main);
 
@@ -24,7 +20,7 @@ entry!(main);
 
 fn main() -> ! {
 
-    let Board {motor_1: mut output_pin, mut delay, ..} = Board::new();
+    let Board {motor_1: output_pin, mut delay, ..} = Board::new();
 
     let baud = 9600u32;
     let time_adjustment = -6i32;
@@ -32,7 +28,6 @@ fn main() -> ! {
 
     loop {
         for i in 0..10 {
-            let text = "test".as_bytes();
             tx.write(&mut delay, "index: ".as_bytes());
             tx.write(&mut delay, &[(i+48) as u8]);
             tx.write(&mut delay, "\n\r".as_bytes());
