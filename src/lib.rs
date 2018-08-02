@@ -14,6 +14,8 @@ use hal::cortex_m;
 extern crate mpu9250;
 use mpu9250::Mpu9250;
 
+pub mod write;
+
 type Led = PC15<Output<PushPull>>;
 
 type BoardSpi = Spi<stm32f30x::SPI1, (PB3<AF5>, PB4<AF5>, PB5<AF5>)>;

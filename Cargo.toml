@@ -14,6 +14,7 @@ version = "*"
 cortex-m-rt = "*"
 panic-semihosting = "*"
 bit-bang-serial = {git = "https://github.com/JoshMcguigan/bit-bang-serial"}
+madgwick = "0.1.1"
 
 [features]
 rt = ["stm32f30x-hal/rt"]
