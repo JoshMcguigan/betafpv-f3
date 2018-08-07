@@ -49,51 +49,43 @@ fn main() -> ! {
 
     let mut marg = madgwick::Marg::new(1f32, 1f32);
 
-    // LED controlled by orientation of board
     loop {
-        let orientation = marg.update(
-            stub_magnetometer_value(),
-            to_f32x3(mpu.accel().unwrap()),
-            to_f32x3(mpu.gyro().unwrap())
-        );
+//        let orientation = marg.update(
+//            stub_magnetometer_value(),
+//            to_f32x3(mpu.accel().unwrap()),
+//            to_f32x3(mpu.gyro().unwrap())
+//        );
 
-        let mut buf = [0u8; 64];
-        let s: &str = write_to::show(
-            &mut buf,
-            format_args!("0: {}\n\r", orientation.0),
-        ).unwrap();
-        tx.write(&mut delay, s.as_bytes());
+        let raw_accel = mpu.accel().unwrap();
+        let accel_scale = 2.0 / 32_767.0;
 
-        let mut buf = [0u8; 64];
-        let s: &str = write_to::show(
-            &mut buf,
-            format_args!("1: {}\n\r", orientation.1),
-        ).unwrap();
-        tx.write(&mut delay, s.as_bytes());
+        // scaled to g
+        let scaled_accel = scale_to_f32x3(raw_accel, accel_scale);
 
-        let mut buf = [0u8; 64];
-        let s: &str = write_to::show(
-            &mut buf,
-            format_args!("2: {}\n\r", orientation.2),
-        ).unwrap();
-        tx.write(&mut delay, s.as_bytes());
+        for string in [
+                format_args!("accel x: {}\n\r", scaled_accel.x),
+                format_args!("accel y: {}\n\r", scaled_accel.y),
+                format_args!("accel z: {}\n\r", scaled_accel.z),
+            ].iter() {
 
-        let mut buf = [0u8; 64];
-        let s: &str = write_to::show(
-            &mut buf,
-            format_args!("3: {}\n\r", orientation.3),
-        ).unwrap();
-        tx.write(&mut delay, s.as_bytes());
+            let mut buf = [0u8; 64];
+            let s: &str = write_to::show(
+                &mut buf,
+                *string,
+            ).unwrap();
+            tx.write(&mut delay, s.as_bytes());
+
+        }
 
         delay.delay_ms(2000u32);
     }
 }
 
-fn to_f32x3(item: I16x3) -> F32x3 {
+fn scale_to_f32x3(item: I16x3, scale: f32) -> F32x3 {
     F32x3 {
-        x: item.x as f32,
-        y: item.y as f32,
-        z: item.z as f32,
+        x: item.x as f32 * scale,
+        y: item.y as f32 * scale,
+        z: item.z as f32 * scale,
     }
 }
 
