@@ -15,6 +15,7 @@ use rt::ExceptionFrame;
 use betafpv_f3::write::write_to;
 use madgwick::F32x3;
 use mpu9250::I16x3;
+use core::f32::consts::PI;
 
 entry!(main);
 
@@ -56,16 +57,22 @@ fn main() -> ! {
 //            to_f32x3(mpu.gyro().unwrap())
 //        );
 
-        let raw_accel = mpu.accel().unwrap();
-        let accel_scale = 2.0 / 32_767.0;
+        let raw_g = mpu.accel().unwrap();
+        let g_scale = 2.0 / 32_767.0; // scaled to units of g
 
-        // scaled to g
-        let scaled_accel = scale_to_f32x3(raw_accel, accel_scale);
+        let raw_ar = mpu.gyro().unwrap();
+        let ar_scale = 250.0 / 32_767.0 * (PI / 180.0); // scaled to rad/s
+
+        let scaled_g = scale_to_f32x3(raw_g, g_scale);
+        let scaled_ar = scale_to_f32x3(raw_ar, ar_scale);
 
         for string in [
-                format_args!("accel x: {}\n\r", scaled_accel.x),
-                format_args!("accel y: {}\n\r", scaled_accel.y),
-                format_args!("accel z: {}\n\r", scaled_accel.z),
+                format_args!("gx: {}\n\r", scaled_g.x),
+                format_args!("gy: {}\n\r", scaled_g.y),
+                format_args!("gz: {}\n\r", scaled_g.z),
+                format_args!("arx: {}\n\r", scaled_ar.x),
+                format_args!("ary: {}\n\r", scaled_ar.y),
+                format_args!("arz: {}\n\r", scaled_ar.z),
             ].iter() {
 
             let mut buf = [0u8; 64];
