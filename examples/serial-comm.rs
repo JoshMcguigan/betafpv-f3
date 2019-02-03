@@ -14,9 +14,9 @@ use rt::ExceptionFrame;
 
 entry!(main);
 
-///
-/// NOTE: Connect the positive and negative motor leads with a 10 ohm resistor
-///
+/// connect the positive and negative motor leads with a 10 ohm resistor
+/// betafpv-f3 board requires ~3.6 volts to work reliably
+/// use `ls /dev/cu*` to find usb-serial converter, then `screen /dev/cuXXX 9600`
 
 fn main() -> ! {
 
