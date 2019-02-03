@@ -18,6 +18,7 @@ use mpu9250::I16x3;
 use core::f32::consts::PI;
 use imu::{filter_update, Q, V};
 use byteorder::{LE, ByteOrder};
+use betafpv_f3::write::write_to;
 
 entry!(main);
 
@@ -40,14 +41,14 @@ fn main() -> ! {
 
 
     // blinking LED means the assertion was correct
-    for _i in 0..5 {
+    for _i in 0..3 {
         led.set_high();
 
-        delay.delay_ms(100u32);
+        delay.delay_ms(250u32);
 
         led.set_low();
 
-        delay.delay_ms(100u32);
+        delay.delay_ms(250u32);
     }
 
     let mut orientation = Q {
@@ -99,6 +100,7 @@ fn main() -> ! {
 
 
         // machine readable output
+        // use with https://github.com/japaric/f3/blob/v0.5.3/viz
         // Serialize the quaternion
         let mut start = 0;
         let mut buf: [u8; 16] = [0; 16];
@@ -112,7 +114,7 @@ fn main() -> ! {
         // start += 4;
 
         // Log data
-        let mut output_buf: [u8; 16] = [0; 16];
+        let mut output_buf: [u8; 18] = [0; 18]; // this array needs space for cob overhead, plus delimiter byte
         cobs::encode(&buf, &mut output_buf);
 
         tx.write(&mut delay, &output_buf);
