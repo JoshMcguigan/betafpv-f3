@@ -39,7 +39,6 @@ fn main() -> ! {
     let time_adjustment = -6i32;
     let mut tx = bit_bang_serial::Tx::new(output_pin, baud, time_adjustment);
 
-
     // blinking LED means the assertion was correct
     for _i in 0..3 {
         led.set_high();
@@ -79,6 +78,7 @@ fn main() -> ! {
             scaled_ar.clone(),
             scaled_g.clone(),
             orientation,
+            0.02 // sampling period in seconds
         );
 
 //        // human readable output
