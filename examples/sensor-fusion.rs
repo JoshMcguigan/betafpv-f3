@@ -8,14 +8,16 @@ extern crate panic_semihosting;
 extern crate bit_bang_serial;
 extern crate mpu9250;
 extern crate imu;
+extern crate byteorder;
+extern crate cobs;
 
 use betafpv_f3::hal::prelude::*;
 use betafpv_f3::Board;
 use rt::ExceptionFrame;
-use betafpv_f3::write::write_to;
 use mpu9250::I16x3;
 use core::f32::consts::PI;
 use imu::{filter_update, Q, V};
+use byteorder::{LE, ByteOrder};
 
 entry!(main);
 
@@ -41,11 +43,11 @@ fn main() -> ! {
     for _i in 0..5 {
         led.set_high();
 
-        delay.delay_ms(500u32);
+        delay.delay_ms(100u32);
 
         led.set_low();
 
-        delay.delay_ms(500u32);
+        delay.delay_ms(100u32);
     }
 
     let mut orientation = Q {
@@ -72,28 +74,48 @@ fn main() -> ! {
             orientation,
         );
 
-        for string in [
-                format_args!("gx: {}\n\r", scaled_g.x),
-                format_args!("gy: {}\n\r", scaled_g.y),
-                format_args!("gz: {}\n\r", scaled_g.z),
-                format_args!("arx: {}\n\r", scaled_ar.x),
-                format_args!("ary: {}\n\r", scaled_ar.y),
-                format_args!("arz: {}\n\r", scaled_ar.z),
-                format_args!("q1: {}\n\r", orientation.q1),
-                format_args!("q2: {}\n\r", orientation.q2),
-                format_args!("q3: {}\n\r", orientation.q3),
-                format_args!("q4: {}\n\r", orientation.q4),
-            ].iter() {
+//        // human readable output
+//        for string in [
+//                format_args!("gx: {}\n\r", scaled_g.x),
+//                format_args!("gy: {}\n\r", scaled_g.y),
+//                format_args!("gz: {}\n\r", scaled_g.z),
+//                format_args!("arx: {}\n\r", scaled_ar.x),
+//                format_args!("ary: {}\n\r", scaled_ar.y),
+//                format_args!("arz: {}\n\r", scaled_ar.z),
+//                format_args!("q1: {}\n\r", orientation.q1),
+//                format_args!("q2: {}\n\r", orientation.q2),
+//                format_args!("q3: {}\n\r", orientation.q3),
+//                format_args!("q4: {}\n\r", orientation.q4),
+//            ].iter() {
+//
+//            let mut buf = [0u8; 64];
+//            let s: &str = write_to::show(
+//                &mut buf,
+//                *string,
+//            ).unwrap();
+//            tx.write(&mut delay, s.as_bytes());
+//        }
+//        delay.delay_ms(2000u32);
 
-            let mut buf = [0u8; 64];
-            let s: &str = write_to::show(
-                &mut buf,
-                *string,
-            ).unwrap();
-            tx.write(&mut delay, s.as_bytes());
-        }
 
-        delay.delay_ms(2000u32);
+        // machine readable output
+        // Serialize the quaternion
+        let mut start = 0;
+        let mut buf: [u8; 16] = [0; 16];
+        LE::write_f32(&mut buf[start..start + 4], orientation.q1);
+        start += 4;
+        LE::write_f32(&mut buf[start..start + 4], orientation.q2);
+        start += 4;
+        LE::write_f32(&mut buf[start..start + 4], orientation.q3);
+        start += 4;
+        LE::write_f32(&mut buf[start..start + 4], orientation.q4);
+        // start += 4;
+
+        // Log data
+        let mut output_buf: [u8; 16] = [0; 16];
+        cobs::encode(&buf, &mut output_buf);
+
+        tx.write(&mut delay, &output_buf);
     }
 }
 
