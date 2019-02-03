@@ -12,8 +12,8 @@ version = "*"
 
 [dev-dependencies]
 cortex-m-rt = "*"
-panic-semihosting = "*"
-bit-bang-serial = {git = "https://github.com/JoshMcguigan/bit-bang-serial"}
+panic-semihosting = "0.5.1"
+bit-bang-serial = { git = "https://github.com/JoshMcguigan/bit-bang-serial" }
 madgwick = "0.1.1"
 
 [features]
