@@ -14,7 +14,7 @@ version = "*"
 cortex-m-rt = "*"
 panic-semihosting = "0.5.1"
 bit-bang-serial = { git = "https://github.com/JoshMcguigan/bit-bang-serial" }
-madgwick = "0.1.1"
+imu = { path = "../imu" }
 
 [features]
 rt = ["stm32f30x-hal/rt"]
