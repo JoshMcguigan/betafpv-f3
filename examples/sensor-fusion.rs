@@ -67,6 +67,12 @@ fn main() -> ! {
         let ar_scale = 250.0 / 32_767.0 * (PI / 180.0); // scaled to rad/s
 
         let scaled_g = scale_to_f32x3(raw_g, g_scale);
+        // Fix the X Y Z components of the accelerometer so they match the gyro axes
+        let scaled_g = V {
+            x: scaled_g.y,
+            y: -scaled_g.x,
+            z: scaled_g.z,
+        };
         let scaled_ar = scale_to_f32x3(raw_ar, ar_scale);
 
         orientation = filter_update(
