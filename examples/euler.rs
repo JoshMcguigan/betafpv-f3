@@ -16,8 +16,7 @@ use betafpv_f3::Board;
 use rt::ExceptionFrame;
 use mpu9250::I16x3;
 use core::f32::consts::PI;
-use imu::{filter_update, Q, V};
-use byteorder::{LE, ByteOrder};
+use imu::{filter_update, Q, V, Euler};
 use betafpv_f3::write::write_to;
 
 entry!(main);
@@ -60,6 +59,8 @@ fn main() -> ! {
         q4: 0.0
     };
 
+    let mut count = 0;
+
     loop {
 
         let raw_g = mpu.accel().unwrap();
@@ -84,49 +85,34 @@ fn main() -> ! {
             0.02 // sampling period in seconds
         );
 
-//        // human readable output
-//        for string in [
-//                format_args!("gx: {}\n\r", scaled_g.x),
-//                format_args!("gy: {}\n\r", scaled_g.y),
-//                format_args!("gz: {}\n\r", scaled_g.z),
-//                format_args!("arx: {}\n\r", scaled_ar.x),
-//                format_args!("ary: {}\n\r", scaled_ar.y),
-//                format_args!("arz: {}\n\r", scaled_ar.z),
-//                format_args!("q1: {}\n\r", orientation.q1),
-//                format_args!("q2: {}\n\r", orientation.q2),
-//                format_args!("q3: {}\n\r", orientation.q3),
-//                format_args!("q4: {}\n\r", orientation.q4),
-//            ].iter() {
-//
-//            let mut buf = [0u8; 64];
-//            let s: &str = write_to::show(
-//                &mut buf,
-//                *string,
-//            ).unwrap();
-//            tx.write(&mut delay, s.as_bytes());
-//        }
-//        delay.delay_ms(2000u32);
+        let euler = Euler::from(orientation.clone());
 
+        if count == 100 {
+            // human readable output
+            for string in [
+                format_args!("gx: {}\n\r", scaled_g.x),
+                format_args!("gy: {}\n\r", scaled_g.y),
+                format_args!("gz: {}\n\r", scaled_g.z),
+                format_args!("arx: {}\n\r", scaled_ar.x),
+                format_args!("ary: {}\n\r", scaled_ar.y),
+                format_args!("arz: {}\n\r", scaled_ar.z),
+                format_args!("roll: {}\n\r", euler.roll),
+                format_args!("pitch: {}\n\r", euler.pitch),
+                format_args!("yaw: {}\n\r", euler.yaw),
+            ].iter() {
 
-        // machine readable output
-        // use with https://github.com/japaric/f3/blob/v0.5.3/viz
-        // Serialize the quaternion
-        let mut start = 0;
-        let mut buf: [u8; 16] = [0; 16];
-        LE::write_f32(&mut buf[start..start + 4], orientation.q1);
-        start += 4;
-        LE::write_f32(&mut buf[start..start + 4], orientation.q2);
-        start += 4;
-        LE::write_f32(&mut buf[start..start + 4], orientation.q3);
-        start += 4;
-        LE::write_f32(&mut buf[start..start + 4], orientation.q4);
-        // start += 4;
-
-        // Log data
-        let mut output_buf: [u8; 18] = [0; 18]; // this array needs space for cob overhead, plus delimiter byte
-        cobs::encode(&buf, &mut output_buf);
-
-        tx.write(&mut delay, &output_buf);
+                let mut buf = [0u8; 64];
+                let s: &str = write_to::show(
+                    &mut buf,
+                    *string,
+                ).unwrap();
+                tx.write(&mut delay, s.as_bytes());
+            }
+            count = 0;
+        } else {
+            count += 1;
+            delay.delay_ms(20u32);
+        }
     }
 }
 
