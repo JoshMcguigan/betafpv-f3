@@ -53,10 +53,10 @@ fn main() -> ! {
     // TODO look at including checksum to see if display smooths out
 
     let mut orientation = Q {
-        q1: 1.0,
-        q2: 0.0,
-        q3: 0.0,
-        q4: 0.0
+        w: 1.0,
+        x: 0.0,
+        y: 0.0,
+        z: 0.0
     };
 
     let mut count = 0;
@@ -90,12 +90,10 @@ fn main() -> ! {
         if count == 100 {
             // human readable output
             for string in [
-                format_args!("gx: {}\n\r", scaled_g.x),
-                format_args!("gy: {}\n\r", scaled_g.y),
-                format_args!("gz: {}\n\r", scaled_g.z),
-                format_args!("arx: {}\n\r", scaled_ar.x),
-                format_args!("ary: {}\n\r", scaled_ar.y),
-                format_args!("arz: {}\n\r", scaled_ar.z),
+                format_args!("q1: {}\n\r", orientation.w),
+                format_args!("q2: {}\n\r", orientation.x),
+                format_args!("q3: {}\n\r", orientation.y),
+                format_args!("q4: {}\n\r", orientation.z),
                 format_args!("roll: {}\n\r", euler.roll),
                 format_args!("pitch: {}\n\r", euler.pitch),
                 format_args!("yaw: {}\n\r", euler.yaw),

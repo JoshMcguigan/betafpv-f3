@@ -54,10 +54,10 @@ fn main() -> ! {
     // TODO look at including checksum to see if display smooths out
 
     let mut orientation = Q {
-        q1: 1.0,
-        q2: 0.0,
-        q3: 0.0,
-        q4: 0.0
+        w: 1.0,
+        x: 0.0,
+        y: 0.0,
+        z: 0.0
     };
 
     loop {
@@ -113,13 +113,13 @@ fn main() -> ! {
         // Serialize the quaternion
         let mut start = 0;
         let mut buf: [u8; 16] = [0; 16];
-        LE::write_f32(&mut buf[start..start + 4], orientation.q1);
+        LE::write_f32(&mut buf[start..start + 4], orientation.w);
         start += 4;
-        LE::write_f32(&mut buf[start..start + 4], orientation.q2);
+        LE::write_f32(&mut buf[start..start + 4], orientation.x);
         start += 4;
-        LE::write_f32(&mut buf[start..start + 4], orientation.q3);
+        LE::write_f32(&mut buf[start..start + 4], orientation.y);
         start += 4;
-        LE::write_f32(&mut buf[start..start + 4], orientation.q4);
+        LE::write_f32(&mut buf[start..start + 4], orientation.z);
         // start += 4;
 
         // Log data
