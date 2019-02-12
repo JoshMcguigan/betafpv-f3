@@ -3,6 +3,7 @@
 pub extern crate stm32f30x_hal as hal;
 use hal::prelude::*;
 use hal::delay::Delay;
+use hal::time::MonoTimer;
 use hal::gpio::{Output, PushPull, AF5};
 use hal::gpio::gpioa::*;
 use hal::gpio::gpiob::*;
@@ -31,6 +32,7 @@ pub struct Board {
     pub led: Led,
     pub mpu: Mpu,
     pub delay: Delay,
+    pub mono_timer: MonoTimer,
     /// motor outputs are supplied voltage only when battery is connected, they are not powered by USB
     /// there are two green LEDs which also come on when battery voltage is applied
     /// the green LEDs do not seem to be controlled by GPIO
@@ -44,6 +46,7 @@ impl Board {
     pub fn new() -> Self {
         let cp = cortex_m::Peripherals::take().unwrap();
         let dp = stm32f30x::Peripherals::take().unwrap();
+        let dwt = stm32f30x::CorePeripherals::take().unwrap().DWT;
         let mut rcc = dp.RCC.constrain();
         let mut flash = dp.FLASH.constrain();
         let clocks = rcc.cfgr.freeze(&mut flash.acr);
@@ -71,6 +74,7 @@ impl Board {
             &mut rcc.apb2,
         );
         let mut delay = Delay::new(cp.SYST, clocks);
+        let mono_timer = MonoTimer::new(dwt, clocks);
         let mpu = Mpu9250::imu(spi, nss, &mut delay).unwrap();
 
         let motor_1 = gpioa
@@ -86,6 +90,6 @@ impl Board {
             .pb9
             .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
 
-        Board { led, mpu, delay, motor_1, motor_2, motor_3, motor_4 }
+        Board { led, mpu, delay, mono_timer, motor_1, motor_2, motor_3, motor_4 }
     }
 }

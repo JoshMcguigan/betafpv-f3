@@ -16,7 +16,7 @@ use betafpv_f3::Board;
 use rt::ExceptionFrame;
 use mpu9250::I16x3;
 use core::f32::consts::PI;
-use imu::{filter_update, Q, V};
+use imu::{filter_update, Q, V, Euler};
 use byteorder::{LE, ByteOrder};
 use betafpv_f3::write::write_to;
 
@@ -83,6 +83,8 @@ fn main() -> ! {
             orientation,
             0.02 // sampling period in seconds
         );
+
+        let euler = Euler::from(orientation.clone());
 
 //        // human readable output
 //        for string in [
